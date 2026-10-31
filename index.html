@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nova Aesthetic | Luxury Lamps</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --gold:#c9a24d; --gold2:#e6c878; --black:#0e0e0e; --card:#181818; --line:#2a2a2a; --text:#f2ede4; --muted:#a39b8b; --green:#4cd37b; --red:#ff6b5e; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--black); color:var(--text); font-family:'Poppins',Arial,sans-serif; font-weight:300; }
+  h1,h2,h3,.serif { font-family:'Playfair Display',Georgia,serif; }
+
+  /* Header */
+  header { position:sticky; top:0; z-index:20; background:rgba(14,14,14,.95); border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; padding:14px 18px; }
+  .logo { font-family:'Playfair Display',serif; font-size:22px; letter-spacing:2px; color:var(--gold2); }
+  .cart-btn { background:none; border:1px solid var(--gold); color:var(--gold2); padding:8px 14px; border-radius:30px; cursor:pointer; font-size:14px; font-family:inherit; }
+  .cart-btn span { background:var(--gold); color:#000; border-radius:50%; padding:1px 7px; margin-left:6px; font-size:12px; font-weight:500; }
+
+  /* Live bar */
+  .live { display:none; background:#121212; border-bottom:1px solid var(--line); padding:10px 14px; font-size:12px; text-align:center; }
+  .live.show { display:block; }
+  .live .row { display:flex; flex-wrap:wrap; gap:6px 16px; justify-content:center; align-items:center; }
+  .live b { color:var(--gold2); font-weight:500; }
+  .dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--green); margin-right:6px; animation:pulse 1.4s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(76,211,123,.6);} 70%{box-shadow:0 0 0 8px rgba(76,211,123,0);} 100%{box-shadow:0 0 0 0 rgba(76,211,123,0);} }
+  .bar { height:4px; background:#262626; border-radius:4px; max-width:360px; margin:8px auto 0; overflow:hidden; }
+  .bar i { display:block; height:100%; width:0; background:linear-gradient(90deg,var(--gold),var(--gold2)); transition:width .5s; }
+  .warn { color:var(--red); }
+
+  /* Hero */
+  .hero { position:relative; overflow:hidden; height:340px; background:radial-gradient(ellipse at 50% 120%, #4a3512 0%, #1a1308 45%, #0a0a0a 100%); display:flex; align-items:center; justify-content:center; text-align:center; padding:20px; }
+  .hero > div { position:relative; z-index:2; }
+  .hero-art { position:absolute; inset:0; width:100%; height:100%; z-index:1; }
+  @media(min-width:700px){ .hero{ height:460px; } }
+  .hero small { letter-spacing:4px; color:var(--gold2); font-size:12px; text-transform:uppercase; }
+  .hero h2 { font-size:34px; margin:10px 0; font-weight:500; }
+  @media(min-width:700px){ .hero h2{ font-size:50px; } }
+  .hero p { color:var(--muted); margin-bottom:20px; }
+  .hero a { border:1px solid var(--gold); color:var(--gold2); padding:12px 30px; text-decoration:none; letter-spacing:2px; font-size:13px; text-transform:uppercase; }
+  .hero a:hover { background:var(--gold); color:#000; }
+
+  .section-title { text-align:center; padding:34px 10px 10px; }
+  .section-title h3 { font-size:26px; font-weight:500; }
+  .section-title div { width:60px; height:2px; background:var(--gold); margin:10px auto 0; }
+
+  /* Products */
+  .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; padding:16px; max-width:1100px; margin:auto; }
+  @media(min-width:800px){ .grid{ grid-template-columns:repeat(4,1fr); gap:18px; } }
+  .card { background:var(--card); border:1px solid var(--line); display:flex; flex-direction:column; }
+  .card img { width:100%; aspect-ratio:1/1; object-fit:cover; background:#222; }
+  .galwrap { position:relative; }
+  .gal { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  .gal::-webkit-scrollbar { display:none; }
+  .gal img { flex:0 0 100%; scroll-snap-align:center; }
+  .dots { position:absolute; bottom:7px; left:0; right:0; display:flex; justify-content:center; gap:5px; pointer-events:none; }
+  .dots i { width:6px; height:6px; border-radius:6px; background:rgba(255,255,255,.5); transition:all .25s; }
+  .dots i.on { width:16px; background:var(--gold2); }
+  .arr { position:absolute; top:50%; transform:translateY(-50%); width:26px; height:26px; border-radius:50%; border:none; background:rgba(0,0,0,.5); color:#fff; font-size:18px; line-height:1; cursor:pointer; opacity:0; transition:opacity .2s; }
+  .arr.l { left:6px; } .arr.r { right:6px; }
+  .galwrap:hover .arr { opacity:1; }
+  @media(hover:none){ .arr { display:none; } }
+  .info { padding:10px; display:flex; flex-direction:column; gap:6px; flex:1; }
+  .name { font-size:13px; min-height:36px; }
+  .price { color:var(--gold2); font-size:17px; font-weight:500; display:flex; flex-wrap:wrap; align-items:baseline; gap:2px 8px; }
+  .old { color:var(--muted); font-size:12px; text-decoration:line-through; font-weight:300; }
+  .off { color:var(--green); font-size:12px; font-weight:500; }
+  .btns { display:flex; gap:6px; margin-top:auto; }
+  .btn { flex:1; padding:9px 4px; font-size:12px; cursor:pointer; border:1px solid var(--gold); font-family:inherit; letter-spacing:.5px; }
+  .btn.ghost { background:transparent; color:var(--gold2); }
+  .btn.solid { background:var(--gold); color:#000; font-weight:500; }
+  .btn.full { width:100%; flex:none; padding:13px; font-size:14px; margin-top:14px; }
+  .btn:disabled { opacity:.45; cursor:not-allowed; }
+  .btn.added { background:var(--gold); color:#000; }
+  .btn { transition:transform .12s ease, background .2s; }
+  .btn:active:not(:disabled) { transform:scale(.95); }
+
+  /* Order animations */
+  .spin { display:inline-block; width:14px; height:14px; border:2px solid rgba(0,0,0,.25); border-top-color:#000; border-radius:50%; vertical-align:-2px; margin-right:8px; animation:spin .7s linear infinite; }
+  @keyframes spin { to{transform:rotate(360deg);} }
+  .tick { width:90px; height:90px; margin:0 auto 14px; }
+  .tick circle { stroke:var(--gold); stroke-width:3; fill:none; stroke-dasharray:166; stroke-dashoffset:166; animation:draw .7s ease forwards; transform-origin:center; }
+  .tick path { stroke:var(--gold2); stroke-width:4; fill:none; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:48; stroke-dashoffset:48; animation:draw .45s .55s ease forwards; }
+  @keyframes draw { to{stroke-dashoffset:0;} }
+  .done h3, .done p { animation:riseUp .6s 2.3s both; }
+
+  /* Parcel + delivery truck scene */
+  .scene { position:relative; height:190px; overflow:hidden; margin-bottom:10px; }
+  .box { position:absolute; left:50%; top:0; width:110px; margin-left:-55px; animation:boxLoad .55s 1.25s ease-in forwards; }
+  .box .lid { animation:lidClose .75s ease-out both; }
+  @keyframes lidClose { 0%{transform:translateY(-48px) rotate(-14deg); opacity:0;} 65%{transform:translateY(3px) rotate(0); opacity:1;} 100%{transform:none; opacity:1;} }
+  @keyframes boxLoad { to{ transform:translateY(92px) scale(.35); opacity:0; } }
+  .road { position:absolute; left:0; right:0; bottom:22px; height:3px; background:#2a2a2a; }
+  .truck { position:absolute; bottom:26px; left:50%; width:150px; margin-left:-75px; animation:drive 3.3s ease-in-out forwards; }
+  @keyframes drive { 0%{transform:translateX(-300px);} 34%{transform:translateX(0);} 58%{transform:translateX(0);} 100%{transform:translateX(330px);} }
+  .wheel { transform-box:fill-box; transform-origin:center; animation:spin .45s linear infinite; }
+
+  /* Order Now button shine */
+  .buy-btn { position:relative; overflow:hidden; }
+  .buy-btn.shine::after { content:''; position:absolute; top:0; left:-60%; width:40%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent); transform:skewX(-20deg); animation:sweep .55s ease; }
+  @keyframes sweep { to{ left:130%; } }
+  @keyframes riseUp { from{opacity:0;transform:translateY(14px);} to{opacity:1;transform:none;} }
+  .bit { position:fixed; top:42%; left:50%; width:8px; height:12px; z-index:200; pointer-events:none; opacity:0; animation:burst 1.4s cubic-bezier(.2,.7,.3,1) forwards; }
+  @keyframes burst { 0%{opacity:1; transform:translate(0,0) rotate(0);} 100%{opacity:0; transform:translate(var(--dx),var(--dy)) rotate(var(--r));} }
+
+  /* Add-to-cart animations */
+  .fly { position:fixed; z-index:100; object-fit:cover; border-radius:8px; pointer-events:none; opacity:.95; transition:transform .75s cubic-bezier(.55,-.1,.7,1), opacity .75s ease-in; box-shadow:0 6px 18px rgba(0,0,0,.5); }
+  @keyframes bump { 0%{transform:scale(1);} 40%{transform:scale(1.22);} 100%{transform:scale(1);} }
+  .cart-btn.bump { animation:bump .45s ease; }
+  #toast { position:fixed; left:50%; bottom:26px; transform:translate(-50%,30px); background:var(--gold); color:#000; padding:10px 20px; border-radius:30px; font-size:13px; font-weight:500; opacity:0; pointer-events:none; transition:all .35s ease; z-index:120; }
+  #toast.show { opacity:1; transform:translate(-50%,0); }
+  @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+  @keyframes slideIn { from{transform:translateX(100%);} to{transform:translateX(0);} }
+  .overlay.show { animation:fadeIn .25s ease; }
+  .overlay.show .panel { animation:slideIn .32s cubic-bezier(.2,.8,.2,1); }
+
+  footer { text-align:center; color:var(--muted); font-size:12px; padding:30px 10px 40px; border-top:1px solid var(--line); margin-top:30px; }
+
+  /* Panels */
+  .overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:50; justify-content:flex-end; }
+  .overlay.show { display:flex; }
+  .panel { background:#151515; width:100%; max-width:440px; height:100%; overflow:auto; padding:18px; border-left:1px solid var(--line); }
+  .panel-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .panel-head h3 { font-size:22px; font-weight:500; color:var(--gold2); }
+  .x { background:none; border:none; color:var(--text); font-size:28px; cursor:pointer; }
+  .item { display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); align-items:flex-start; }
+  .item img { width:64px; height:64px; object-fit:cover; flex-shrink:0; }
+  .item .d { flex:1; min-width:0; font-size:13px; }
+  .item .nm { margin-bottom:2px; }
+  .qty { display:flex; align-items:center; gap:10px; margin-top:8px; }
+  .qty span { min-width:18px; text-align:center; }
+  .qb { width:28px; height:28px; background:none; border:1px solid var(--gold); color:var(--gold2); cursor:pointer; font-size:16px; line-height:1; }
+  .rm { display:inline-block; margin-top:8px; background:none; border:none; color:var(--muted); cursor:pointer; font-size:12px; text-decoration:underline; font-family:inherit; padding:0; }
+  .total { display:flex; justify-content:space-between; font-size:17px; margin-top:16px; color:var(--gold2); }
+  .empty { text-align:center; color:var(--muted); padding:40px 0; }
+
+  label { display:block; font-size:12px; margin:12px 0 4px; color:var(--muted); letter-spacing:.5px; }
+  input, textarea { width:100%; padding:11px; background:#0e0e0e; border:1px solid var(--line); color:var(--text); font-size:14px; font-family:inherit; }
+  input:focus, textarea:focus { outline:none; border-color:var(--gold); }
+  .note { font-size:12px; color:var(--muted); margin-top:10px; }
+  .soldmsg { display:none; background:#2a1512; border:1px solid var(--red); color:var(--red); padding:10px; font-size:13px; margin-top:12px; text-align:center; }
+  .soldmsg.show { display:block; }
+  .done { text-align:center; padding:50px 10px; }
+  .done h3 { color:var(--gold2); font-size:26px; margin-bottom:10px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">NOVA AESTHETIC</div>
+  <button class="cart-btn" onclick="openCart()">Cart<span id="cartCount">0</span></button>
+</header>
+
+<!-- LIVE STATUS BAR (shows only after Firebase is set up) -->
+<div class="live" id="live">
+  <div class="row">
+    <span><span class="dot"></span><b>LIVE</b></span>
+    <span>Orders today: <b id="lvOrders">0</b> / <b id="lvLimit">0</b></span>
+    <span id="lvLeft"></span>
+    <span>🛒 <b id="lvCarts">0</b> added to cart today</span>
+  </div>
+  <div class="bar"><i id="lvBar"></i></div>
+</div>
+
+<section class="hero">
+  <svg class="hero-art" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#ffd98a" stop-opacity=".55"/>
+        <stop offset="100%" stop-color="#ffd98a" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <g>
+      <line x1="140" y1="0" x2="140" y2="170" stroke="#c9a24d" stroke-width="2"/>
+      <circle cx="140" cy="230" r="150" fill="url(#glow)"/>
+      <path d="M85 235 Q140 150 195 235 Z" fill="#c9a24d"/>
+      <ellipse cx="140" cy="236" rx="55" ry="7" fill="#ffe7a8"/>
+    </g>
+    <g>
+      <line x1="860" y1="0" x2="860" y2="140" stroke="#c9a24d" stroke-width="2"/>
+      <circle cx="860" cy="205" r="170" fill="url(#glow)"/>
+      <path d="M795 210 Q860 115 925 210 Z" fill="#c9a24d"/>
+      <ellipse cx="860" cy="211" rx="65" ry="8" fill="#ffe7a8"/>
+    </g>
+    <g>
+      <line x1="330" y1="0" x2="330" y2="90" stroke="#8a6d2e" stroke-width="1.5"/>
+      <circle cx="330" cy="105" r="70" fill="url(#glow)" opacity=".6"/>
+      <circle cx="330" cy="105" r="13" fill="#ffe7a8"/>
+      <line x1="670" y1="0" x2="670" y2="70" stroke="#8a6d2e" stroke-width="1.5"/>
+      <circle cx="670" cy="85" r="70" fill="url(#glow)" opacity=".6"/>
+      <circle cx="670" cy="85" r="13" fill="#ffe7a8"/>
+    </g>
+  </svg>
+  <div>
+    <small>Luxury Lighting</small>
+    <h2>Light Up Your Space<br>With Elegance</h2>
+    <p>Designer lamps that turn any room into a statement.</p>
+    <a href="#products">Shop Collection</a>
+  </div>
+</section>
+
+<div class="section-title" id="products"><h3>Our Collection</h3><div></div></div>
+<div class="grid" id="grid"></div>
+
+<footer>© Nova Aesthetic. All rights reserved.<br>Cash on Delivery available.</footer>
+
+<!-- CART PANEL -->
+<div class="overlay" id="cartOverlay">
+  <div class="panel">
+    <div class="panel-head"><h3>Your Cart</h3><button class="x" onclick="closeAll()">×</button></div>
+    <div id="cartItems"></div>
+    <div id="cartFooter"></div>
+  </div>
+</div>
+
+<!-- CHECKOUT PANEL -->
+<div class="overlay" id="checkoutOverlay">
+  <div class="panel">
+    <div class="panel-head"><h3>Checkout</h3><button class="x" onclick="closeAll()">×</button></div>
+    <div id="checkoutView">
+      <div id="summary"></div>
+      <div class="soldmsg" id="soldMsg">Sorry, today's order limit has been reached. Orders will reopen tomorrow.</div>
+      <form id="orderForm">
+        <label>FULL NAME *</label>
+        <input name="Customer Name" required>
+        <label>MOBILE NUMBER *</label>
+        <input name="Mobile" type="tel" pattern="[6-9][0-9]{9}" maxlength="10" required placeholder="10-digit number">
+        <label>FULL ADDRESS (House no., street, village/area) *</label>
+        <textarea name="Address" rows="2" required></textarea>
+        <label>LOCALITY *</label>
+        <input name="Locality" required>
+        <label>LANDMARK *</label>
+        <input name="Landmark" required>
+        <label>CITY / DISTRICT *</label>
+        <input name="City" required>
+        <label>STATE *</label>
+        <input name="State" required>
+        <label>PINCODE *</label>
+        <input name="Pincode" type="tel" pattern="[0-9]{6}" maxlength="6" required>
+
+        <input type="hidden" name="Order Items" id="fItems">
+        <input type="hidden" name="Order Total" id="fTotal">
+        <input type="hidden" name="Product Images" id="fImages">
+        <input type="hidden" name="_subject" value="New Order - Nova Aesthetic">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="text" name="_honey" style="display:none">
+
+        <p class="note">Payment: Cash on Delivery. Delivery may take a few days.</p>
+        <button class="btn solid full" id="submitBtn" type="submit">PLACE ORDER</button>
+      </form>
+    </div>
+    <div class="done" id="doneView" style="display:none;">
+      <div class="scene" aria-hidden="true">
+        <svg class="box" viewBox="0 0 120 100">
+          <rect x="20" y="45" width="80" height="50" fill="#c58f55" stroke="#8f5f31" stroke-width="2"/>
+          <rect x="54" y="45" width="12" height="50" fill="#e6c878"/>
+          <g class="lid">
+            <rect x="14" y="30" width="92" height="18" fill="#d9a468" stroke="#8f5f31" stroke-width="2"/>
+            <rect x="54" y="30" width="12" height="18" fill="#e6c878"/>
+          </g>
+        </svg>
+        <div class="road"></div>
+        <svg class="truck" viewBox="0 0 160 80">
+          <rect x="4" y="10" width="96" height="48" rx="4" fill="#1f1f1f" stroke="#c9a24d" stroke-width="2"/>
+          <text x="52" y="40" text-anchor="middle" font-size="12" fill="#e6c878" font-family="Georgia,serif">NOVA</text>
+          <path d="M100 26 H130 L148 42 V58 H100 Z" fill="#c9a24d"/>
+          <path d="M110 31 H128 L138 42 H110 Z" fill="#1c1c1c"/>
+          <g class="wheel"><circle cx="32" cy="62" r="11" fill="#111" stroke="#e6c878" stroke-width="3"/><line x1="32" y1="53" x2="32" y2="71" stroke="#e6c878" stroke-width="2"/></g>
+          <g class="wheel"><circle cx="122" cy="62" r="11" fill="#111" stroke="#e6c878" stroke-width="3"/><line x1="122" y1="53" x2="122" y2="71" stroke="#e6c878" stroke-width="2"/></g>
+        </svg>
+      </div>
+      <h3>Order Placed</h3>
+      <p>Thank you for shopping with Nova Aesthetic.<br>We will contact you shortly to confirm your order.</p>
+      <button class="btn solid full" onclick="closeAll()">CONTINUE SHOPPING</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+// ============ 1) PUT YOUR ORDER EMAIL HERE ============
+const MY_EMAIL = "novaaesthtic.in@gmail.com";
+
+// ============ 2) DAILY ORDER LIMIT ============
+// Must be the same number you put in the Firebase rules.
+const DAILY_LIMIT = 25;
+
+// ============ 3) FIREBASE CONFIG (for live counters + daily limit) ============
+// Leave as it is to run the site WITHOUT live counters.
+// Paste your values from Firebase to turn the live system on.
+const FIREBASE_CONFIG = {
+  apiKey: "PASTE_HERE",
+  databaseURL: "PASTE_HERE",
+  projectId: "PASTE_HERE"
+};
+
+// ============ 4) YOUR PRODUCTS (edit name, price, mrp, image) ============
+// To add a product, copy one line and change the details (new id number).
+// image: a photo link, or a file name in the same folder (e.g. "lamp1.jpg")
+// Leave image:"" to show a placeholder lamp drawing.
+// mrp:0 = no cut price shown. Only fill mrp if it is the real MRP printed on the product.
+// PHOTOS: one photo  -> image:"lamp1.jpg"
+//         2-3 photos -> images:["lamp1a.jpg","lamp1b.jpg","lamp1c.jpg"]   (customer can swipe)
+// type = shape of the placeholder drawing (used only when no photo is added)
+const products = [
+  { id:1,  type:"silicone", name:"Silicone Touch Panda Night Lamp",      price:349, mrp:889, image:"https://i.ibb.co/hxT2NX4d/Panda-Night-Light-Little-Prince-Glow.png" },
+  { id:2,  type:"silicone", name:"Night Light Pear Cute LED Nursery Nightlight Lamp",       price:349, mrp:649, image:"https://i.ibb.co/0pwZTfxC/Cozy-Pear-Lamp-Product-Display.png" },
+  { id:3,  type:"silicone",     name:"Silicone Touch Panda Lamp",          price:299, mrp:399, image:"https://i.ibb.co/mCnD0mVR/Whats-App-Image-2026-10-31-at-8-43-40-PM.jpg" },
+  { id:4,  type:"silicone",   name:"Soft Silicone Cute Bunny Night Ligh",         price:344, mrp:759, image:"https://i.ibb.co/RTW7qX3J/Screenshot-2026-10-31-152024.png" },
+  { id:5,  type:"silicone",    name:"Rabbit Silicone Night Light",            price:329, mrp:766, image:"https://i.ibb.co/FCfSGgc/Screenshot-2026-10-31-152106.png" },
+  { id:6,  type:"moon",     name:"3D Crystal Moon Lamp",      price:175, mrp:319, image:"https://i.ibb.co/20Fckn6X/Cozy-Moon-Lamp-Lifestyle-Collection-3-1-1.png" },
+  { id:7,  type:"saturn",   name:"3D Crystal Saturn Lamp",             price:189, mrp:399, image:"https://i.ibb.co/KcCBdFHL/Screenshot-2026-10-31-065249.png" },
+  { id:8,  type:"crystal",  name:"3D Crystal Solar System Lamp",       price:174, mrp:329, image:"https://i.ibb.co/WNkvk1Rq/Screenshot-2026-10-31-065353.png" },
+  { id:9,  type:"Study Lamp",   name:"Cute Cartoon Desk Lamp",     price:279, mrp:997, image:"https://i.ibb.co/0j7RH8YW/Screenshot-2026-10-31-151046.png" },
+  { id:10, type:"3d Lamp",     name:"Love Neon LED Light Sign",            price:299, mrp:1399, image:"https://i.ibb.co/ccZJZDv9/Screenshot-2026-10-31-151247.png" },
+  { id:11, type:"Study",     name:"USB Rechargeable LED Book Reading Light",   price:254, mrp:555, image:"https://i.ibb.co/4wPPPpGq/Whats-App-Image-2026-10-31-at-8-43-44-PM.jpg" }];
+// =====================================================================
+
+const MAX_QTY = 10;
+const fmt = n => '₹' + n.toLocaleString('en-IN');
+
+// Placeholder lamp drawings by type (shown until you add a real photo)
+function placeholder(p){
+  const base = '<ellipse cx="100" cy="165" rx="38" ry="8" fill="#6b5320"/>';
+  const glow = c => `<circle cx="100" cy="95" r="80" fill="${c}" opacity=".16"/>`;
+  const art = {
+    moon:     glow('#f3e3b0') + '<circle cx="100" cy="95" r="52" fill="#f3e3b0"/><circle cx="82" cy="80" r="9" fill="#d8c48a"/><circle cx="115" cy="105" r="12" fill="#d8c48a"/><circle cx="95" cy="118" r="6" fill="#d8c48a"/>' + base,
+    galaxy:   glow('#9a6bff') + '<circle cx="100" cy="95" r="52" fill="#2a1b5e"/><circle cx="85" cy="85" r="22" fill="#6a3fd0" opacity=".7"/><circle cx="118" cy="108" r="16" fill="#c04fa8" opacity=".6"/><circle cx="78" cy="112" r="2" fill="#fff"/><circle cx="120" cy="78" r="2" fill="#fff"/><circle cx="105" cy="95" r="1.5" fill="#fff"/><circle cx="92" cy="70" r="1.5" fill="#fff"/>' + base,
+    saturn:   glow('#e6c878') + '<circle cx="100" cy="95" r="34" fill="#e6c878"/><ellipse cx="100" cy="98" rx="62" ry="14" fill="none" stroke="#c9a24d" stroke-width="6" transform="rotate(-18 100 98)"/>' + base,
+    crystal:  glow('#bfe7ff') + '<path d="M100 40 L145 85 L100 150 L55 85 Z" fill="#bfe7ff" opacity=".85"/><path d="M100 40 L120 85 L100 150 L80 85 Z" fill="#fff" opacity=".5"/><path d="M55 85 L145 85" stroke="#8cc7e8" stroke-width="2"/>' + base,
+    silicone: glow('#ffb6c8') + '<rect x="58" y="55" width="84" height="95" rx="34" fill="#ffb6c8"/><circle cx="84" cy="95" r="5" fill="#3a2a2a"/><circle cx="116" cy="95" r="5" fill="#3a2a2a"/><path d="M90 112 Q100 120 110 112" stroke="#3a2a2a" stroke-width="3" fill="none"/>',
+    rose:     glow('#ff7a8a') + '<circle cx="100" cy="85" r="38" fill="#e0405a"/><circle cx="100" cy="85" r="26" fill="#f0586f"/><circle cx="100" cy="85" r="14" fill="#ff7a8a"/><rect x="98" y="120" width="4" height="40" fill="#3f8f4f"/><path d="M60 62 Q100 20 140 62" stroke="#e6c878" stroke-width="2" fill="none" opacity=".7"/>' + base,
+    mushroom: glow('#ffd98a') + '<path d="M50 105 Q100 20 150 105 Z" fill="#ffd98a"/><circle cx="82" cy="82" r="7" fill="#fff" opacity=".7"/><circle cx="115" cy="75" r="5" fill="#fff" opacity=".7"/><rect x="84" y="105" width="32" height="48" rx="10" fill="#f3e3b0"/>' + base,
+    cloud:    glow('#bfe7ff') + '<circle cx="78" cy="100" r="26" fill="#eaf6ff"/><circle cx="105" cy="85" r="32" fill="#eaf6ff"/><circle cx="130" cy="102" r="24" fill="#eaf6ff"/><rect x="58" y="100" width="95" height="26" rx="12" fill="#eaf6ff"/>',
+    wood:     glow('#ffd98a') + '<path d="M62 105 L78 55 L122 55 L138 105 Z" fill="#f3e3b0"/><rect x="94" y="105" width="12" height="42" fill="#9a6a3a"/><rect x="66" y="147" width="68" height="14" rx="4" fill="#7a4f28"/>',
+    sunset:   glow('#ff9a5e') + '<path d="M55 130 A45 45 0 0 1 145 130 Z" fill="#ff9a5e"/><rect x="55" y="118" width="90" height="4" fill="#1c1c1c"/><rect x="55" y="126" width="90" height="3" fill="#1c1c1c"/>' + base,
+    desk:     glow('#ffd98a') + '<path d="M70 150 L100 85 L140 55" stroke="#c9a24d" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M128 48 L165 62 L150 82 Z" fill="#e6c878"/><ellipse cx="85" cy="158" rx="34" ry="8" fill="#6b5320"/>'
+  };
+  // Crystal-ball lamp style (glass ball on a wooden base) for solar system, moon, saturn and galaxy lamps
+  const stars = '<circle cx="78" cy="70" r="1.3" fill="#fff"/><circle cx="125" cy="76" r="1.3" fill="#fff"/><circle cx="82" cy="118" r="1.3" fill="#fff"/><circle cx="122" cy="112" r="1.3" fill="#fff"/><circle cx="100" cy="62" r="1.1" fill="#fff"/><circle cx="140" cy="95" r="1.1" fill="#fff"/><circle cx="62" cy="95" r="1.1" fill="#fff"/>';
+  const ball = inner =>
+    '<defs><radialGradient id="bl" cx="50%" cy="42%" r="60%"><stop offset="0%" stop-color="#2c2010"/><stop offset="100%" stop-color="#0b0704"/></radialGradient></defs>' +
+    '<circle cx="100" cy="92" r="78" fill="#ffcf70" opacity=".13"/>' +
+    '<ellipse cx="100" cy="162" rx="50" ry="12" fill="#8f5f31"/><rect x="50" y="144" width="100" height="18" fill="#c58f55"/><ellipse cx="100" cy="144" rx="50" ry="11" fill="#e0b074"/>' +
+    '<circle cx="100" cy="92" r="56" fill="url(#bl)" stroke="#f0cf8a" stroke-opacity=".55" stroke-width="2"/>' + inner +
+    '<ellipse cx="100" cy="140" rx="30" ry="6" fill="#ffd98a" opacity=".55"/><path d="M62 70 Q68 52 86 44" stroke="#fff" stroke-opacity=".55" stroke-width="3" fill="none" stroke-linecap="round"/>';
+  Object.assign(art, {
+    crystal:  ball('<g fill="none" stroke="#f0cf8a" stroke-opacity=".8" stroke-width="1"><ellipse cx="100" cy="92" rx="18" ry="8"/><ellipse cx="100" cy="92" rx="28" ry="12"/><ellipse cx="100" cy="92" rx="38" ry="16"/><ellipse cx="100" cy="92" rx="48" ry="20"/></g><circle cx="100" cy="92" r="6" fill="#ffe7a8"/><circle cx="128" cy="92" r="3" fill="#ffd98a"/><circle cx="80" cy="102" r="3.5" fill="#ffd98a"/><circle cx="100" cy="72" r="3" fill="#ffd98a"/><circle cx="64" cy="90" r="2.5" fill="#ffd98a"/>' + stars),
+    moon:     ball('<circle cx="100" cy="92" r="28" fill="#f3e3b0"/><circle cx="90" cy="84" r="5" fill="#d8c48a"/><circle cx="108" cy="98" r="7" fill="#d8c48a"/><circle cx="96" cy="104" r="3" fill="#d8c48a"/>' + stars),
+    saturn:   ball('<circle cx="100" cy="92" r="19" fill="#e6c878"/><ellipse cx="100" cy="94" rx="44" ry="10" fill="none" stroke="#f0cf8a" stroke-width="3.5" transform="rotate(-20 100 94)"/>' + stars),
+    galaxy:   ball('<ellipse cx="100" cy="92" rx="40" ry="14" fill="#8a5cff" opacity=".55" transform="rotate(-30 100 92)"/><ellipse cx="100" cy="92" rx="30" ry="9" fill="#e6a8ff" opacity=".6" transform="rotate(30 100 92)"/><circle cx="100" cy="92" r="7" fill="#fff3c8"/>' + stars)
+  });
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#120d08"/>${art[p.type] || art.crystal}</svg>`;
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+// A product can have 1 photo (image:"a.jpg") or several (images:["a.jpg","b.jpg","c.jpg"])
+function imgsRaw(p){ return (p.images && p.images.length) ? p.images : (p.image ? [p.image] : []); }
+function imgsOf(p){ const l = imgsRaw(p); return l.length ? l : [placeholder(p)]; }
+function imgOf(p){ return imgsOf(p)[0]; }
+function galDots(g){
+  const i = Math.round(g.scrollLeft / g.clientWidth);
+  g.parentElement.querySelectorAll('.dots i').forEach((d, k) => d.classList.toggle('on', k === i));
+}
+function galGo(btn, d){
+  const g = btn.parentElement.querySelector('.gal');
+  g.scrollBy({ left: d * g.clientWidth, behavior:'smooth' });
+}
+function find(id){ return products.find(p => p.id === id); }
+
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem('nova_cart') || '[]'); } catch(e) { cart = []; }
+function saveCart(){ try { localStorage.setItem('nova_cart', JSON.stringify(cart)); } catch(e){} }
+
+// ---------------- LIVE SYSTEM (Firebase) ----------------
+const LIVE_ON = FIREBASE_CONFIG.databaseURL && !FIREBASE_CONFIG.databaseURL.includes('PASTE') && typeof firebase !== 'undefined';
+let db = null, ordersToday = 0, cartsToday = 0, dayKey = '';
+
+function todayKey(){ return new Date().toLocaleDateString('en-CA', { timeZone:'Asia/Kolkata' }); } // YYYY-MM-DD (India time)
+function ordersRef(){ return db.ref('stats/' + dayKey + '/orders'); }
+function cartsRef(){ return db.ref('stats/' + dayKey + '/carts'); }
+function soldOut(){ return !!db && ordersToday >= DAILY_LIMIT; }
+
+function initLive(){
+  if (!LIVE_ON) return;
+  try {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.database();
+    dayKey = todayKey();
+    ordersRef().on('value', s => { ordersToday = s.val() || 0; renderLive(); });
+    cartsRef().on('value',  s => { cartsToday  = s.val() || 0; renderLive(); });
+    // new day started while page is open -> reload to reset counters
+    setInterval(() => { if (todayKey() !== dayKey) location.reload(); }, 60000);
+  } catch (e) { db = null; }
+}
+
+function renderLive(){
+  if (!db) return;
+  const box = document.getElementById('live');
+  box.classList.add('show');
+  const left = Math.max(DAILY_LIMIT - ordersToday, 0);
+  document.getElementById('lvOrders').textContent = ordersToday;
+  document.getElementById('lvLimit').textContent = DAILY_LIMIT;
+  document.getElementById('lvCarts').textContent = cartsToday;
+  document.getElementById('lvBar').style.width = Math.min(100, ordersToday / DAILY_LIMIT * 100) + '%';
+  const leftEl = document.getElementById('lvLeft');
+  if (left === 0) leftEl.innerHTML = '<span class="warn"><b class="warn">SOLD OUT for today</b> – reopens tomorrow</span>';
+  else if (left <= 5) leftEl.innerHTML = '<span class="warn">Only <b class="warn">' + left + '</b> slots left!</span>';
+  else leftEl.innerHTML = 'Slots left: <b>' + left + '</b>';
+
+  const out = soldOut();
+  document.querySelectorAll('.buy-btn').forEach(b => { b.disabled = out; b.textContent = out ? 'Sold Out' : 'Order Now'; });
+  const sb = document.getElementById('submitBtn');
+  sb.disabled = out; if (out) sb.textContent = 'SOLD OUT TODAY'; else if (sb.textContent === 'SOLD OUT TODAY') sb.textContent = 'PLACE ORDER';
+  document.getElementById('soldMsg').classList.toggle('show', out);
+  renderCart();
+}
+
+function bump(ref, d){ try { ref.transaction(n => Math.max((n || 0) + d, 0)); } catch(e){} }
+
+// ---------------- PRODUCTS ----------------
+const grid = document.getElementById('grid');
+products.forEach(p => {
+  grid.insertAdjacentHTML('beforeend', `
+    <div class="card">
+      <div class="galwrap">
+        <div class="gal" onscroll="galDots(this)">${imgsOf(p).map(s => `<img src="${s}" alt="${p.name}" loading="lazy">`).join('')}</div>
+        ${imgsOf(p).length > 1 ? `<button class="arr l" onclick="galGo(this,-1)">‹</button><button class="arr r" onclick="galGo(this,1)">›</button><div class="dots">${imgsOf(p).map((_, i) => `<i class="${i === 0 ? 'on' : ''}"></i>`).join('')}</div>` : ''}
+      </div>
+      <div class="info">
+        <div class="name">${p.name}</div>
+        <div class="price">${fmt(p.price)}${p.mrp > p.price ? `<span class="old">${fmt(p.mrp)}</span><span class="off">${Math.round((p.mrp - p.price) / p.mrp * 100)}% off</span>` : ''}</div>
+        <div class="btns">
+          <button class="btn ghost" onclick="addToCart(${p.id}, this)">Add to Cart</button>
+          <button class="btn solid buy-btn" onclick="buyNow(${p.id}, this)">Order Now</button>
+        </div>
+      </div>
+    </div>`);
+});
+
+// ---------------- CART ----------------
+function addToCart(id, btn){
+  const it = cart.find(c => c.id === id);
+  if (it) it.qty = Math.min(MAX_QTY, it.qty + 1); else cart.push({ id, qty:1 });
+  saveCart(); renderCart();          // only adds to cart - the cart does NOT open
+  if (db) bump(cartsRef(), 1);
+  if (btn) { flyToCart(btn); flashButton(btn); }
+  showToast('✓ Added to cart');
+}
+
+// Product image flies into the cart button, then the cart button bounces
+function flyToCart(btn){
+  const card = btn.closest('.card');
+  const gal = card && card.querySelector('.gal');
+  const imgs = gal ? gal.querySelectorAll('img') : [];
+  const img = gal && (imgs[Math.round(gal.scrollLeft / gal.clientWidth)] || imgs[0]);
+  const cartBtn = document.querySelector('.cart-btn');
+  if (!img || !cartBtn) return;
+  const r = gal.getBoundingClientRect(), c = cartBtn.getBoundingClientRect();
+  const f = document.createElement('img');
+  f.src = img.src; f.className = 'fly';
+  f.style.cssText = `left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;`;
+  document.body.appendChild(f);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const dx = (c.left + c.width / 2) - (r.left + r.width / 2);
+    const dy = (c.top + c.height / 2) - (r.top + r.height / 2);
+    f.style.transform = `translate(${dx}px,${dy}px) scale(.08)`;
+    f.style.opacity = '.35';
+  }));
+  setTimeout(() => {
+    f.remove();
+    cartBtn.classList.remove('bump'); void cartBtn.offsetWidth; cartBtn.classList.add('bump');
+  }, 780);
+}
+function flashButton(btn){
+  const old = btn.textContent;
+  btn.textContent = 'Added ✓'; btn.classList.add('added');
+  setTimeout(() => { btn.textContent = old; btn.classList.remove('added'); }, 1000);
+}
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1600);
+}
+function changeQty(id, d){
+  const it = cart.find(c => c.id === id);
+  if (!it) return;
+  it.qty = Math.min(MAX_QTY, it.qty + d);
+  if (it.qty < 1) cart = cart.filter(c => c.id !== id);
+  saveCart(); renderCart();
+}
+function removeItem(id){ cart = cart.filter(c => c.id !== id); saveCart(); renderCart(); }
+
+function renderCart(){
+  document.getElementById('cartCount').textContent = cart.reduce((s,c) => s + c.qty, 0);
+  const box = document.getElementById('cartItems');
+  const foot = document.getElementById('cartFooter');
+  if (!cart.length){
+    box.innerHTML = '<div class="empty">Your cart is empty.</div>';
+    foot.innerHTML = '';
+    return;
+  }
+  let total = 0;
+  box.innerHTML = cart.map(c => {
+    const p = find(c.id); total += p.price * c.qty;
+    return `<div class="item">
+      <img src="${imgOf(p)}" alt="">
+      <div class="d">
+        <div class="nm">${p.name}</div>
+        <b style="color:var(--gold2)">${fmt(p.price)}</b>
+        <div class="qty">
+          <button class="qb" onclick="changeQty(${p.id},-1)">−</button>
+          <span>${c.qty}</span>
+          <button class="qb" onclick="changeQty(${p.id},1)">+</button>
+        </div>
+        <button class="rm" onclick="removeItem(${p.id})">Remove</button>
+      </div></div>`;
+  }).join('');
+  foot.innerHTML = `<div class="total"><span>Total</span><span>${fmt(total)}</span></div>
+    <button class="btn solid full" ${soldOut() ? 'disabled' : ''} onclick="startCheckout(cart, true)">${soldOut() ? 'SOLD OUT TODAY' : 'PROCEED TO CHECKOUT'}</button>`;
+}
+
+// ---------------- CHECKOUT ----------------
+let checkoutItems = [], fromCart = false;
+
+function buyNow(id, btn){
+  if (btn) {
+    btn.classList.remove('shine'); void btn.offsetWidth; btn.classList.add('shine');
+    setTimeout(() => btn.classList.remove('shine'), 600);
+  }
+  setTimeout(() => startCheckout([{ id, qty:1 }], false), btn ? 350 : 0);
+}
+
+// Product image zooms towards the checkout panel when "Order Now" is pressed
+function flyToCheckout(btn){
+  const card = btn.closest('.card');
+  const img = card && card.querySelector('img');
+  if (!img) return;
+  const r = img.getBoundingClientRect();
+  const f = document.createElement('img');
+  f.src = img.src; f.className = 'fly';
+  f.style.cssText = `left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px;`;
+  document.body.appendChild(f);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const dx = (window.innerWidth * 0.72) - (r.left + r.width / 2);
+    const dy = (window.innerHeight * 0.22) - (r.top + r.height / 2);
+    f.style.transform = `translate(${dx}px,${dy}px) scale(.35)`;
+    f.style.opacity = '0';
+  }));
+  setTimeout(() => f.remove(), 800);
+}
+
+// Gold confetti burst after a successful order
+function celebrate(){
+  const colors = ['#c9a24d','#e6c878','#ffe7a8','#ffffff','#f0cf8a'];
+  for (let i = 0; i < 40; i++){
+    const b = document.createElement('span');
+    b.className = 'bit';
+    b.style.background = colors[i % colors.length];
+    b.style.setProperty('--dx', ((Math.random() - .5) * 360) + 'px');
+    b.style.setProperty('--dy', (Math.random() * 380 - 140) + 'px');
+    b.style.setProperty('--r', (Math.random() * 720 - 360) + 'deg');
+    b.style.animationDelay = (Math.random() * .15) + 's';
+    document.body.appendChild(b);
+    setTimeout(() => b.remove(), 1700);
+  }
+}
+
+function startCheckout(items, isCart){
+  if (!items.length) return;
+  checkoutItems = JSON.parse(JSON.stringify(items));
+  fromCart = !!isCart;
+  document.getElementById('checkoutView').style.display = 'block';
+  document.getElementById('doneView').style.display = 'none';
+  closeAll();
+  renderCheckout();
+  document.getElementById('checkoutOverlay').classList.add('show');
+  renderLive();
+}
+
+function coQty(id, d){
+  const it = checkoutItems.find(c => c.id === id);
+  if (!it) return;
+  it.qty = Math.min(MAX_QTY, Math.max(1, it.qty + d));
+  renderCheckout();
+}
+
+function renderCheckout(){
+  let total = 0, lines = [], imgs = [];
+  const rows = checkoutItems.map(c => {
+    const p = find(c.id); const sub = p.price * c.qty; total += sub;
+    const first = imgsRaw(p)[0];
+    const img = !first ? '(no image added)' : (first.startsWith('http') ? first : new URL(first, location.href).href);
+    lines.push(`${p.name} x ${c.qty} = ${fmt(sub)}`);
+    imgs.push(`${p.name}: ${img}`);
+    return `<div class="item">
+      <img src="${imgOf(p)}" alt="">
+      <div class="d">
+        <div class="nm">${p.name}</div>
+        <b style="color:var(--gold2)">${fmt(p.price)}</b>
+        <div class="qty">
+          <button class="qb" type="button" onclick="coQty(${p.id},-1)">−</button>
+          <span>${c.qty}</span>
+          <button class="qb" type="button" onclick="coQty(${p.id},1)">+</button>
+          <span style="margin-left:auto;color:var(--muted)">${fmt(sub)}</span>
+        </div>
+      </div></div>`;
+  }).join('');
+  document.getElementById('summary').innerHTML = rows + `<div class="total"><span>Total</span><span>${fmt(total)}</span></div>`;
+  document.getElementById('fItems').value = lines.join('\n');
+  document.getElementById('fTotal').value = fmt(total);
+  document.getElementById('fImages').value = imgs.join('\n');
+}
+
+function openCart(){ renderCart(); closeAll(); document.getElementById('cartOverlay').classList.add('show'); }
+function closeAll(){ document.querySelectorAll('.overlay').forEach(o => o.classList.remove('show')); }
+
+// Reserve one of today's order slots (returns true if reserved)
+function reserveSlot(){
+  return new Promise(resolve => {
+    if (!db) return resolve(true); // live system off -> no limit
+    ordersRef().transaction(
+      n => { n = n || 0; return n >= DAILY_LIMIT ? undefined : n + 1; },
+      (err, committed) => resolve(!err && committed)
+    );
+  });
+}
+
+document.getElementById('orderForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>PLACING ORDER...';
+
+  const ok = await reserveSlot();
+  if (!ok) {
+    alert("Sorry, today's order limit has just been reached. Please order tomorrow.");
+    btn.disabled = false; btn.textContent = 'PLACE ORDER';
+    renderLive();
+    return;
+  }
+  try {
+    const res = await fetch('https://formsubmit.co/ajax/' + MY_EMAIL, {
+      method:'POST', headers:{ 'Accept':'application/json' }, body:new FormData(e.target)
+    });
+    if (!res.ok) throw new Error();
+    if (fromCart) { cart = []; saveCart(); renderCart(); }
+    e.target.reset();
+    document.getElementById('checkoutView').style.display = 'none';
+    document.getElementById('doneView').style.display = 'block';
+  } catch (err) {
+    if (db) bump(ordersRef(), -1); // give the slot back, order did not go through
+    alert('Could not place the order. Please check your internet and try again.');
+  }
+  btn.disabled = false; btn.textContent = 'PLACE ORDER';
+  renderLive();
+});
+
+initLive();
+renderCart();
+</script>
+</body>
+</html>
