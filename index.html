@@ -283,7 +283,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
 // ============ 1) PUT YOUR ORDER EMAIL HERE ============
-const MY_EMAIL = "novaaesthtic.in@gmail.com";
+const MY_EMAIL = "novaaesthetic.in@gmail.com";
 
 // ============ 2) DAILY ORDER LIMIT ============
 // Must be the same number you put in the Firebase rules.
@@ -647,14 +647,15 @@ document.getElementById('orderForm').addEventListener('submit', async e => {
     const res = await fetch('https://formsubmit.co/ajax/' + MY_EMAIL, {
       method:'POST', headers:{ 'Accept':'application/json' }, body:new FormData(e.target)
     });
-    if (!res.ok) throw new Error();
+        const data = await res.json().catch(() => ({}));
+    if (!res.ok || String(data.success) === 'false') { throw new Error(data.message || 'failed'); }
     if (fromCart) { cart = []; saveCart(); renderCart(); }
     e.target.reset();
     document.getElementById('checkoutView').style.display = 'none';
     document.getElementById('doneView').style.display = 'block';
   } catch (err) {
     if (db) bump(ordersRef(), -1); // give the slot back, order did not go through
-    alert('Could not place the order. Please check your internet and try again.');
+        alert('Order failed: ' + (err.message || 'please try again'));
   }
   btn.disabled = false; btn.textContent = 'PLACE ORDER';
   renderLive();
